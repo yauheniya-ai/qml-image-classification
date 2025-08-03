@@ -1,0 +1,16 @@
+# Python version: 3.11.13
+jupyter
+ipykernel
+
+matplotlib
+
+tensorflow
+scikit-learn
+
+pennylane
+aiohttp 
+fsspec 
+h5py
+
+qiskit
+qiskit-aer
