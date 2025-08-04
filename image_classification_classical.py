@@ -1,6 +1,9 @@
 import time
 import numpy as np
+import pandas as pd
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 from tensorflow.keras import layers, models, Input
 from tensorflow.keras.utils import to_categorical
 import pennylane as qml # needed just for loading the dataset
@@ -94,7 +97,24 @@ print(f"Total training time: {total_training_time:.2f} seconds")
 test_loss, test_acc = model.evaluate(X_test, Y_test_cat, verbose=2)
 print(f"Test accuracy: {test_acc:.4f}")
 
-# Plot training accuracy and loss curves side-by-side
+
+# Save training history to CSV
+history_df = pd.DataFrame(history.history)
+history_df.to_csv("./output/classical_ml_training_history.csv", index=False)
+
+# Save training time and test accuracy to file
+metrics_info = {
+    "Total Training Time (s)": [total_training_time],
+    "Test Accuracy": [test_acc]
+}
+metrics_df = pd.DataFrame(metrics_info)
+metrics_df.to_csv("./output/classical_ml_training_summary.csv", index=False)
+
+######## Visualizations ########
+
+# --------------------------
+# Plot Accuracy & Loss
+# --------------------------
 
 fig, axes = plt.subplots(1, 2, figsize=(8, 4))
 
@@ -122,6 +142,10 @@ plt.tight_layout()
 plt.savefig("./output/classical_ml_training_accuracy_loss.png")  # Save the plot locally
 plt.close()
 
+
+# --------------------------
+# Visualize Predictions
+# --------------------------
 
 # Prepare 2 random samples for each class (0 to 3)
 fig, axes = plt.subplots(2, 4, figsize=(8, 4))
@@ -164,4 +188,26 @@ for class_label in range(4):
 fig.suptitle("Classical ML", fontsize=14)
 plt.tight_layout()
 plt.savefig("./output/classical_ml_test_images_pred_by_class.png")
+plt.close()
+
+# --------------------------
+# Confusion Matrix
+# --------------------------
+
+# Predict all test labels
+Y_test_pred_probs = model.predict(X_test)
+Y_test_pred = np.argmax(Y_test_pred_probs, axis=1)
+
+cm = confusion_matrix(Y_test, Y_test_pred)
+
+custom_cmap = LinearSegmentedColormap.from_list("pinkblue", ["#0043a3", "white"])
+
+fig_cm, ax_cm = plt.subplots(figsize=(6, 6))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=[0, 1, 2, 3])
+disp_plot = disp.plot(ax=ax_cm, cmap=custom_cmap, values_format='d')
+
+disp_plot.im_.set_clim(vmin=0, vmax=50)
+
+plt.title("Classical ML")
+plt.savefig("./output/classical_ml_confusion_matrix.png")
 plt.close()
