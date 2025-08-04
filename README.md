@@ -40,10 +40,10 @@ python main.py
 
 ## Results
 
-| Approach | Time per Step | Active Training* | Accuracy | Complexity |
+| Approach | Time per Step | Active Training* | Test Accuracy | Complexity |
 |----------|---------------|----------|----------|------------|
 | Classical ML | 0.38 seconds | 2 epochs | 100% | Low |
-| PennyLane QML | ~1 minute | 300 steps | ~98% | Medium |
+| PennyLane QML | ~0.41 seconds | 220 steps | ~98% | Medium |
 | Qiskit QML | ~2.8 minutes | 300 steps | ~99% | High |
 
 **Active Training refers to the period during which the model is actively being trained until the learning rate leads to a plateau in improvement—meaning the training loss and accuracy stabilize and further optimization yields diminishing returns or no significant progress.*
