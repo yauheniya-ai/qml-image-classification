@@ -43,8 +43,8 @@ python main.py
 | Approach | Time per Step | Active Training* | Accuracy | Complexity |
 |----------|---------------|----------|----------|------------|
 | Classical ML | 0.38 seconds | 2 epochs | 100% | Low |
-| PennyLane QML | ~0.55 minutes | 80 steps | ~75% | Medium |
-| Qiskit QML | ~2.6 minutes | 300 steps | ~90% | High |
+| PennyLane QML | ~1 minute | 300 steps | ~98% | Medium |
+| Qiskit QML | ~2.8 minutes | 300 steps | ~99% | High |
 
 **Active Training refers to the period during which the model is actively being trained until the learning rate leads to a plateau in improvement—meaning the training loss and accuracy stabilize and further optimization yields diminishing returns or no significant progress.*
 ### Training Performance Visualization
@@ -62,8 +62,8 @@ python main.py
 
 - **Classical ML** achieves perfect accuracy in seconds
 - Quantum approaches require significantly more computational time
-- The **Qiskit** model provides better accuracy than the **PennyLane** model but with higher implementation complexity
-- The results on Qiskit and PennyLane may change with further hyperparameter tuning
+- Both approaches achieve around 98% test accuracy, but **Qiskit** required nearly three times longer to train; however, its learning process was much more stable, whereas **PennyLane** exhibited fluctuations during training.
+- The results on both QML approaches may change with further hyperparameter tuning
 
 ## File Structure
 
