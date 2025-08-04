@@ -5,6 +5,9 @@ from qiskit.quantum_info import Statevector
 import numpy as np
 import pennylane as qml  # needed just for loading the dataset
 import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from matplotlib.colors import LinearSegmentedColormap
 
 plt.style.use('dark_background') 
 
@@ -93,8 +96,8 @@ params = np.random.normal(0, np.pi, size=(4, 8))
 weights = np.random.normal(0, 0.1, size=(4, 2))
 biases = np.zeros(4)
 
-# Gradient-free optimization (e.g., simple SGD)
-steps = 300  # Adjust the number of steps
+# Gradient-free optimization
+steps = 300  # Adjust the number of steps 
 lr = 0.3     # Set learning rate
 
 print(f"Starting training for {steps} steps...")
@@ -156,6 +159,24 @@ print(f"Average time per step: {total_time/steps/60:.1f} minutes.")
 
 test_acc = accuracy(params, weights, biases, X_test, Y_test)
 print(f"Test accuracy: {test_acc:.4f}")
+
+# Save training loss and accuracy history
+training_df = pd.DataFrame({
+    "Step": np.arange(1, steps + 1),
+    "Train Loss": losses,
+    "Train Accuracy": train_accuracies,
+    "Step Time (s)": step_times
+})
+training_df.to_csv("./output/qiskit_qml_training_history.csv", index=False)
+
+summary_df = pd.DataFrame({
+    "Total Training Time (s)": [total_time],
+    "Average Step Time (s)": [np.mean(step_times)],
+    "Test Accuracy": [test_acc]
+})
+summary_df.to_csv("./output/qiskit_qml_training_summary.csv", index=False)
+
+
 
 ######## Visualizations ########
 
@@ -228,3 +249,27 @@ plt.tight_layout()
 plt.savefig("./output/qiskit_qml_test_images_pred.png")
 plt.close()
 
+# --------------------------
+# Confusion Matrix
+# --------------------------
+
+# Get predictions for entire test set
+Y_test_preds = []
+for x in X_test:
+    logits = model(x, params, weights, biases)
+    pred = np.argmax(logits)
+    Y_test_preds.append(pred)
+
+cm = confusion_matrix(Y_test, Y_test_preds)
+
+custom_cmap = LinearSegmentedColormap.from_list("pinkblue", ["#0043a3", "white"])
+
+fig_cm, ax_cm = plt.subplots(figsize=(6, 6))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=[0, 1, 2, 3])
+disp_plot = disp.plot(ax=ax_cm, cmap=custom_cmap, values_format='d')
+
+disp_plot.im_.set_clim(vmin=0, vmax=50)
+
+plt.title("Qiskit QML")
+plt.savefig("./output/qiskit_qml_confusion_matrix.png")
+plt.close()
