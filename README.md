@@ -17,6 +17,10 @@ The Plus Minus dataset from PennyLane contains:
 - 200 test samples
 - 4 classes of geometric patterns
 
+<div align="center">
+  <img src="output/dataset_plus_minus_8_images_by_class.png" alt="Qiskit QML Training">
+</div>
+
 ## Requirements
 
 Install dependencies using:
